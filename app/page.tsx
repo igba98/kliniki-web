@@ -7,6 +7,14 @@ import AppointmentsTable from "./components/Table";
 import ChatFromMothers from "./components/Message";
 import Link from "next/link";
 
+const cardDetails = [
+  { title: "Appointments", count: 400 },
+  { title: "New Mothers", count: 400 },
+  { title: "Emergency", count: 400 },
+  { title: "Wait List", count: 400 },
+];
+
+
 export default function page() {
   return (
     <main className="flex flex-col gap-5">
@@ -44,7 +52,7 @@ export default function page() {
             Clinic Attendance
           </Link>
           <Link
-            href={""}
+            href={"/Register"}
             className="flex flex-row gap-2 rounded-xl bg-[#324889] px-[24px] py-[12px] text-white"
           >
             <Plus size={20} />
@@ -60,10 +68,9 @@ export default function page() {
         </div>
       </section> */}
       <div className="flex flex-row gap-[42px]">
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+        {cardDetails.map((detail, index) => (
+          <Card key={index} title={detail.title} count={detail.count} />
+        ))}
       </div>
 
       <section>
