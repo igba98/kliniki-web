@@ -1,9 +1,9 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 import React from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Doughnut } from "react-chartjs-2";
-import "chart.js/auto";
 
 const initialMembers = [
   { name: "Age below 20 years", checked: true },

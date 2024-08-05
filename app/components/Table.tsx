@@ -9,7 +9,6 @@ import "primeicons/primeicons.css"; // icons
 import Modal from "./Model";
 import Attendance from "../attendance/page";
 
-
 interface Appointment {
   id: string;
   time: string;
@@ -87,37 +86,144 @@ const fetchAppointments = async (): Promise<Appointment[]> => {
   ];
 };
 
+const sendSMS = async (phoneNumber: string, message: string) => {
+  try {
+    const response = await fetch(
+      "https://fmers-api.onrender.com/api/communication/payload-sms",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber, message }),
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to send SMS");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export default function AppointmentsTable() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     fetchAppointments().then((data) => setAppointments(data));
   }, []);
 
-  const onRowSelect = (rowData: Appointment) => {
+  const onStatusButtonClick = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setPhoneNumber(appointment.phoneNumber); // Assuming the phone number is part of the appointment
     setIsModalOpen(true);
+  };
+
+  const statusBodyTemplate = (rowData: Appointment) => {
+    return (
+      <button
+        onClick={() => onStatusButtonClick(rowData)}
+        className="p-button p-component"
+      >
+        {rowData.status}
+      </button>
+    );
+  };
+
+  const handleSend = async () => {
+    try {
+      await sendSMS(phoneNumber, message);
+      alert("Message sent successfully");
+      setIsModalOpen(false);
+    } catch (error) {
+      alert("Failed to send message");
+    }
   };
 
   return (
     <div>
-      <DataTable
-        value={appointments}
-        responsiveLayout="scroll"
-        onClick={onRowSelect}
-      >
+      <DataTable value={appointments} responsiveLayout="scroll">
         <Column field="time" header="Time"></Column>
         <Column field="motherName" header="Mother’s Name"></Column>
         <Column field="location" header="Location"></Column>
-        <Column field="status" header="Status"></Column>
+        <Column
+          field="status"
+          header="Status"
+          body={statusBodyTemplate}
+        ></Column>
       </DataTable>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <Attendance />
-      </Modal>
+      {isModalOpen && selectedAppointment && (
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <div
+            className="rounded-2xl border border-blue-100 bg-white p-4 shadow-lg sm:p-6 lg:p-8"
+            role="alert"
+          >
+            <div className="flex items-center gap-4">
+              <span className="shrink-0 rounded-full bg-blue-400 p-2 text-white">
+                <svg
+                  className="h-4 w-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    clipRule="evenodd"
+                    d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z"
+                    fillRule="evenodd"
+                  />
+                </svg>
+              </span>
+              <p className="font-medium sm:text-lg">New message!</p>
+            </div>
+            <p className="mt-4 text-gray-500">
+              <label>
+                Number of Users:
+                <input
+                  type="number"
+                  className="input-field"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+              </label>
+            </p>
+            <p className="mt-4 text-gray-500">
+              <label>
+                Message:
+                <textarea
+                  className="input-field"
+                  rows={3}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                ></textarea>
+              </label>
+            </p>
+            <div className="mt-6 sm:flex sm:gap-4">
+              <button
+                className="inline-block w-full rounded-lg bg-blue-500 px-5 py-3 text-center text-sm font-semibold text-white sm:w-auto"
+                onClick={handleSend}
+              >
+                Send
+              </button>
+              <button
+                className="mt-2 inline-block w-full rounded-lg bg-gray-50 px-5 py-3 text-center text-sm font-semibold text-gray-500 sm:mt-0 sm:w-auto"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
-
 
 export const MedicalRecordsTable = () => {
   const [records, setRecords] = useState<MedicalRecord[]>([]);
@@ -131,7 +237,6 @@ export const MedicalRecordsTable = () => {
     { field: "nextAppointment", header: "Next Appointment" },
   ];
 
-  // Simulating fetching data
   useEffect(() => {
     const fetchData = async () => {
       const data: MedicalRecord[] = [

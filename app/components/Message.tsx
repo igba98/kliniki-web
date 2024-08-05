@@ -1,9 +1,11 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
-import { ArrowCircleLeft, ArrowLeft, ArrowRight, PaperPlaneTilt } from "@phosphor-icons/react/dist/ssr";
-import React, { useState } from "react";
+import { supabase } from "@/supabaseClient/supabaseClient";
+import { ArrowLeft, PaperPlaneTilt } from "@phosphor-icons/react/dist/ssr";
+import React, { useState, useEffect } from "react";
 
-// Define the Message interface
+
 interface Message {
   id: number;
   name: string;
@@ -11,35 +13,6 @@ interface Message {
   unread: boolean;
 }
 
-// Sample messages data
-const messages: Message[] = [
-  {
-    id: 1,
-    name: "Mamsery Patrick",
-    message: "Hope you're doing alright, today.",
-    unread: true,
-  },
-  {
-    id: 2,
-    name: "Mamsery Patrick",
-    message: "Hope you're doing alright, today.",
-    unread: true,
-  },
-  {
-    id: 3,
-    name: "Mamsery Patrick",
-    message: "Hope you're doing alright, today.",
-    unread: false,
-  },
-  {
-    id: 4,
-    name: "Mamsery Patrick",
-    message: "Hope you're doing alright, today.",
-    unread: true,
-  },
-];
-
-// ChatDetail component
 const ChatDetail: React.FC<{ message: Message; onBack: () => void }> = ({
   message,
   onBack,
@@ -88,9 +61,25 @@ const ChatDetail: React.FC<{ message: Message; onBack: () => void }> = ({
   );
 };
 
-// Main ChatFromMothers component
 const ChatFromMothers: React.FC = () => {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from<Message>("messages")
+        .select("*");
+
+      if (error) {
+        console.error("Error fetching messages:", error);
+      } else {
+        setMessages(data || []);
+      }
+    };
+
+    fetchMessages();
+  }, []);
 
   const handleSelectMessage = (message: Message) => {
     setSelectedMessage(message);
@@ -101,11 +90,11 @@ const ChatFromMothers: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full w-full  justify-center ">
+    <div className="flex h-full w-full justify-center">
       {selectedMessage ? (
         <ChatDetail message={selectedMessage} onBack={handleBack} />
       ) : (
-        <div className="rounded-lg w-full px-10 bg-green-50 p-4 shadow">
+        <div className="w-full rounded-lg bg-green-50 p-4 px-10 shadow">
           <h3 className="mb-4 text-lg font-semibold">Chat from mothers</h3>
           <ul className="flex flex-col gap-4">
             {messages.map((message) => (

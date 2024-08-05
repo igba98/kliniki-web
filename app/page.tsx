@@ -1,6 +1,7 @@
 import React from "react";
 import Card from "./components/Card";
 import { MagnifyingGlass, WarningCircle,Plus } from "@phosphor-icons/react/dist/ssr";
+import SarufiChatbox from "react-sarufi-chatbox";
 
 import Image from "next/image";
 import AppointmentsTable from "./components/Table";
@@ -45,6 +46,7 @@ export default function page() {
       </section>
       <section className="flex justify-end">
         <div className="flex flex-row gap-4">
+          {/* <SarufiChatbox botId={4409} /> */}
           <Link
             href={""}
             className="rounded-xl bg-[#324889] px-[24px] py-[12px] text-white"

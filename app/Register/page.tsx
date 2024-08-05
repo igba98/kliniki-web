@@ -1,6 +1,8 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 import React from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
+import SarufiChatbox from "react-sarufi-chatbox";
 
 interface Member {
   name: string;
@@ -133,7 +135,7 @@ export default function Page() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div>
               <label className="mb-2 block text-sm text-gray-600">
-                Mother's name
+                Mothers name
               </label>
               <input
                 type="text"
@@ -144,7 +146,7 @@ export default function Page() {
             </div>
             <div>
               <label className="mb-2 block text-sm text-gray-600">
-                Mother's Birthdate
+                Mothers Birthdate
               </label>
               <input
                 type="text"
@@ -155,7 +157,7 @@ export default function Page() {
             </div>
             <div>
               <label className="mb-2 block text-sm text-gray-600">
-                Mother's Height
+                Mothers Height
               </label>
               <input
                 type="text"
@@ -169,7 +171,7 @@ export default function Page() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div>
               <label className="mb-2 block text-sm text-gray-600">
-                Mother's Education Level
+                Mothers Education Level
               </label>
               <input
                 type="text"
@@ -180,7 +182,7 @@ export default function Page() {
             </div>
             <div>
               <label className="mb-2 block text-sm text-gray-600">
-                Mother's Occupation
+                Mothers Occupation
               </label>
               <input
                 type="text"
@@ -193,7 +195,7 @@ export default function Page() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div>
               <label className="mb-2 block text-sm text-gray-600">
-                Husband's name
+                Husbands name
               </label>
               <input
                 type="text"
